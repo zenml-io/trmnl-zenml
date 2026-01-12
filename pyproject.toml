@@ -1,0 +1,16 @@
+[project]
+name = "zenml-trmnl"
+version = "0.1.0"
+description = "Display ZenML pipeline status on a TRMNL e-ink display"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.28.0",
+]
+
+[project.scripts]
+zenml-trmnl = "zenml_trmnl:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
