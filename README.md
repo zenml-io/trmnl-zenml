@@ -244,8 +244,18 @@ Copy these templates into your TRMNL Private Plugin's markup editor.
 
 When publishing to the TRMNL Recipe Store, you'll need:
 
-1. **Author Bio** (`author_bio` field) - Required for end-user support. Add this in your plugin's custom fields.
-2. **Icon** - Upload a plugin icon in the Settings view.
+1. **Author Bio** (`author_bio` field) - Required for end-user support. Add this in your plugin's custom fields:
+   ```yaml
+   - keyname: author_bio
+     field_type: author_bio
+     name: About
+     github_url: https://github.com/strickvl/trmnl-zenml
+     learn_more_url: https://docs.zenml.io
+     email_address: hello@zenml.io
+     category: DevOps, MLOps
+   ```
+
+2. **Icon** - Upload a plugin icon in the Settings view (use the ZenML logo or a custom icon).
 
 See [Custom Plugin Form Builder](https://help.usetrmnl.com/en/articles/10513740-custom-plugin-form-builder) for details.
 
