@@ -105,138 +105,159 @@ You can manually trigger the workflow from the Actions tab with options:
 
 ## TRMNL Markup Templates
 
-Copy these templates into your TRMNL Private Plugin's markup editor.
+Copy these templates into your TRMNL Private Plugin's markup editor. Each layout type needs its own markup.
 
-> **Design Note**: These templates use TRMNL's native Framework classes for optimal e-ink rendering. No custom styles needed.
+> **Design Note**: These templates use TRMNL's native Framework classes for optimal e-ink rendering.
 
-### Recent Runs View (Full Screen)
+### Full Screen Layout
 
 ```html
-<div class="view">
-  <div class="layout layout--col">
-    <!-- Stats Header -->
-    <div class="flex flex--row flex--center-y gap--medium py--8 border--h-1 mb--8">
-      <div class="flex flex--row flex--center-y gap--xsmall">
+<div class="layout">
+  <div class="columns">
+    <div class="column">
+      <div class="flex flex--row flex--center-y gap--small pb--4 mb--4 border--h-1">
         <span class="value value--large">{{ running_count }}</span>
-        <span class="label label--small">► RUNNING</span>
-      </div>
-      <span class="divider--v"></span>
-      <div class="flex flex--row flex--center-y gap--xsmall">
+        <span class="label label--small">► RUN</span>
+        <span class="label text--gray-50">|</span>
         <span class="value value--large">{{ completed_count }}</span>
         <span class="label label--small">✓ OK</span>
+        <span class="label text--gray-50">|</span>
+        <span class="value value--large">{{ failed_count }}</span>
+        <span class="label label--small">✗ FAIL</span>
+        <span class="label label--small text--gray-50 grow text--right">{{ stats_period }}</span>
       </div>
-      <span class="divider--v"></span>
-      <div class="flex flex--row flex--center-y gap--xsmall">
-        <span class="label label--inverted px--4 py--2">{{ failed_count }}</span>
-        <span class="label label--small">✗ FAILED</span>
-      </div>
-      <span class="label label--small text--gray-50 grow text--right">{{ stats_period }}</span>
+
+      <table class="table table--small" data-table-limit="true">
+        <thead>
+          <tr>
+            <th></th>
+            <th><span class="title title--small">Run</span></th>
+            <th><span class="title title--small">Pipeline</span></th>
+            <th><span class="title title--small">Started</span></th>
+            <th><span class="title title--small text--right">Duration</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for run in runs %}
+          <tr class="{% if run.is_failed %}bg--black{% endif %}">
+            <td><span class="label {% if run.is_failed %}text--white{% endif %}">{{ run.status_icon }}</span></td>
+            <td><span class="label label--small {% if run.is_failed %}text--white{% endif %}" data-clamp="1">{{ run.name }}</span></td>
+            <td><span class="label label--small {% if run.is_failed %}text--white{% else %}text--gray-40{% endif %}" data-clamp="1">{{ run.pipeline }}</span></td>
+            <td><span class="label label--small {% if run.is_failed %}text--white{% endif %}">{{ run.started }}</span></td>
+            <td><span class="label label--small text--right {% if run.is_failed %}text--white{% endif %}">{{ run.duration }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-
-    <!-- Pipeline Runs Table -->
-    <table class="table table--small" data-table-limit="true">
-      <thead>
-        <tr>
-          <th></th>
-          <th><span class="title title--small">Run</span></th>
-          <th><span class="title title--small">Pipeline</span></th>
-          <th><span class="title title--small">Started</span></th>
-          <th><span class="title title--small text--right">Duration</span></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for run in runs %}
-        <tr class="{% if run.is_failed %}bg--gray-20{% elsif run.in_progress %}bg--gray-10{% endif %}">
-          <td>
-            {% if run.is_failed %}<span class="label label--inverted">{{ run.status_icon }}</span>{% else %}<span class="label">{{ run.status_icon }}</span>{% endif %}
-          </td>
-          <td><span class="label label--small" data-clamp="1">{{ run.name }}</span></td>
-          <td><span class="label label--small text--gray-40" data-clamp="1">{{ run.pipeline }}</span></td>
-          <td><span class="label label--small">{{ run.started }}</span></td>
-          <td><span class="label label--small text--right">{{ run.duration }}</span></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
   </div>
+</div>
 
-  <div class="title_bar">
-    <img class="image" src="https://zenml.io/favicon.ico" />
-    <span class="title">ZenML</span>
-    <span class="instance">{{ updated_at }}</span>
-  </div>
+<div class="title_bar">
+  <img class="image image--contain" src="https://cdn.prod.website-files.com/65264f6bf54e751c3a776db1/65c9f71ef81c034b070e8b97_02%20-%20Logo%20(2)%20(1).png" />
+  <span class="title">ZenML</span>
+  <span class="instance">{{ updated_at }}</span>
 </div>
 ```
 
-### Pipelines Overview (Half Vertical)
+### Half Horizontal Layout
 
 ```html
-<div class="view">
-  <div class="layout">
-    <div class="columns">
-      <div class="column">
-        <span class="title mb--8">{{ title }}</span>
-
-        <table class="table table--xsmall" data-table-limit="true">
-          <thead>
-            <tr>
-              <th></th>
-              <th><span class="title title--small">Pipeline</span></th>
-              <th><span class="title title--small">Status</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for pipeline in pipelines %}
-            <tr class="{% if pipeline.is_failed %}bg--gray-20{% endif %}">
-              <td>{% if pipeline.is_failed %}<span class="label label--inverted">{{ pipeline.status_icon }}</span>{% else %}<span class="label">{{ pipeline.status_icon }}</span>{% endif %}</td>
-              <td><span class="label label--small" data-clamp="1">{{ pipeline.name }}</span></td>
-              <td><span class="label label--small">{{ pipeline.latest_status }}</span></td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-
-        <span class="label label--small text--gray-50 mt--8">{{ updated_at }}</span>
+<div class="layout">
+  <div class="columns">
+    <div class="column">
+      <div class="flex flex--row flex--center-y gap--small mb--4">
+        <span class="value value--xlarge">{{ running_count }}</span>
+        <span class="label">► Running</span>
+        <span class="value value--xlarge ml--8">{{ failed_count }}</span>
+        <span class="label">✗ Failed</span>
       </div>
+      <table class="table table--xsmall" data-table-limit="true">
+        <tbody>
+          {% for run in runs limit:4 %}
+          <tr>
+            <td><span class="label">{{ run.status_icon }}</span></td>
+            <td><span class="label label--small" data-clamp="1">{{ run.pipeline }}</span></td>
+            <td><span class="label label--small text--right">{{ run.started }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
+</div>
 
-  <div class="title_bar">
-    <span class="title">ZenML Pipelines</span>
-  </div>
+<div class="title_bar">
+  <span class="title">ZenML</span>
+  <span class="instance">{{ updated_at }}</span>
 </div>
 ```
 
-### Running Only (Quadrant)
+### Half Vertical Layout
 
 ```html
-<div class="view">
-  <div class="layout">
-    <div class="columns">
-      <div class="column">
-        <div class="flex flex--row flex--center-y gap--small mb--8">
-          <span class="value value--xlarge">{{ running_count }}</span>
-          <span class="label">Running</span>
-        </div>
+<div class="layout">
+  <div class="columns">
+    <div class="column">
+      <span class="title mb--8">{{ title }}</span>
 
-        {% for run in runs limit:3 %}
-        <div class="flex flex--row flex--center-y gap--xsmall mb--4">
-          <span class="label label--small">►</span>
-          <span class="label label--small" data-clamp="1">{{ run.pipeline }}</span>
-          <span class="label label--small text--gray-50">{{ run.duration }}</span>
-        </div>
-        {% endfor %}
+      <table class="table table--xsmall" data-table-limit="true">
+        <thead>
+          <tr>
+            <th></th>
+            <th><span class="title title--small">Pipeline</span></th>
+            <th><span class="title title--small">Status</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pipeline in pipelines %}
+          <tr class="{% if pipeline.is_failed %}bg--gray-20{% endif %}">
+            <td><span class="label">{{ pipeline.status_icon }}</span></td>
+            <td><span class="label label--small" data-clamp="1">{{ pipeline.name }}</span></td>
+            <td><span class="label label--small">{{ pipeline.latest_status }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
 
-        {% if running_count == 0 %}
-        <span class="label label--small text--gray-50">No pipelines running</span>
-        {% endif %}
-      </div>
+      <span class="label label--small text--gray-50 mt--8">{{ updated_at }}</span>
     </div>
   </div>
+</div>
 
-  <div class="title_bar">
-    <span class="title">ZenML</span>
+<div class="title_bar">
+  <span class="title">ZenML</span>
+</div>
+```
+
+### Quadrant Layout
+
+```html
+<div class="layout">
+  <div class="columns">
+    <div class="column">
+      <div class="flex flex--row flex--center-y gap--small mb--8">
+        <span class="value value--xlarge">{{ running_count }}</span>
+        <span class="label">Running</span>
+      </div>
+
+      {% for run in runs limit:3 %}
+      <div class="flex flex--row flex--center-y gap--xsmall mb--4">
+        <span class="label label--small">►</span>
+        <span class="label label--small" data-clamp="1">{{ run.pipeline }}</span>
+        <span class="label label--small text--gray-50">{{ run.duration }}</span>
+      </div>
+      {% endfor %}
+
+      {% if running_count == 0 %}
+      <span class="label label--small text--gray-50">No pipelines running</span>
+      {% endif %}
+    </div>
   </div>
+</div>
+
+<div class="title_bar">
+  <span class="title">ZenML</span>
 </div>
 ```
 
@@ -249,7 +270,7 @@ When publishing to the TRMNL Recipe Store, you'll need:
    - keyname: author_bio
      field_type: author_bio
      name: About
-     github_url: https://github.com/strickvl/trmnl-zenml
+     github_url: https://github.com/zenml-io/trmnl-zenml
      learn_more_url: https://docs.zenml.io
      email_address: hello@zenml.io
      category: DevOps, MLOps
