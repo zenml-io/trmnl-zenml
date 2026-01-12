@@ -2,7 +2,7 @@
 
 Display ZenML pipeline status on a [TRMNL](https://usetrmnl.com) e-ink display, updated automatically via GitHub Actions.
 
-![TRMNL Display](assets/screen.png)
+![TRMNL on desk](assets/desk.png)
 
 ## Features
 
@@ -104,6 +104,8 @@ You can manually trigger the workflow from the Actions tab with options:
 | `DISPLAY_TIMEZONE` | No | `UTC` | Timezone for display (e.g., `Europe/Berlin`, `America/New_York`) |
 
 ## TRMNL Markup Templates
+
+![Screen preview](assets/screen.png)
 
 Copy these templates into your TRMNL Private Plugin's markup editor. Each layout type needs its own markup.
 
