@@ -2,7 +2,7 @@
 
 Display ZenML pipeline status on a [TRMNL](https://usetrmnl.com) e-ink display, updated automatically via GitHub Actions.
 
-![TRMNL Display](https://usetrmnl.com/images/device.png)
+![TRMNL Display](assets/plugin-a3b454.png)
 
 ## Features
 
