@@ -31,10 +31,7 @@ uv sync
 
 ### 3. Create a ZenML Service Account
 
-```bash
-zenml service-account create trmnl-dashboard
-# Save the API key that's printed!
-```
+Create a service account and API key via the [ZenML Pro dashboard](https://docs.zenml.io/pro/access-management/service-accounts) (Settings → Service Accounts). Save the API key - you'll need it for the next step.
 
 ### 4. Test locally with dry-run
 
