@@ -107,65 +107,57 @@ You can manually trigger the workflow from the Actions tab with options:
 
 Copy these templates into your TRMNL Private Plugin's markup editor.
 
-> **Design Note**: These templates are optimized for e-ink displays using a "dashboard newspaper" aesthetic - high contrast, clear typography hierarchy, and scannable information density.
+> **Design Note**: These templates use TRMNL's native Framework classes for optimal e-ink rendering. No custom styles needed.
 
 ### Recent Runs View (Full Screen)
 
 ```html
-<div class="view view--full">
-  <div class="layout layout--padding-sm">
-    <div class="columns">
-      <div class="column">
-        <!-- Stats Header Bar -->
-        <div class="stats-bar">
-          <div class="stats-item">
-            <span class="stats-value">{{ running_count }}</span>
-            <span class="stats-label">►&nbsp;RUNNING</span>
-          </div>
-          <div class="stats-divider"></div>
-          <div class="stats-item">
-            <span class="stats-value">{{ completed_count }}</span>
-            <span class="stats-label">✓&nbsp;OK</span>
-          </div>
-          <div class="stats-divider"></div>
-          <div class="stats-item stats-item--alert">
-            <span class="stats-value">{{ failed_count }}</span>
-            <span class="stats-label">✗&nbsp;FAILED</span>
-          </div>
-          <div class="stats-period">{{ stats_period }}</div>
-        </div>
-
-        <!-- Pipeline Runs Table -->
-        <table class="table table--small runs-table" data-table-limit="true">
-          <thead>
-            <tr>
-              <th class="col-status"></th>
-              <th class="col-run">Run</th>
-              <th class="col-pipeline">Pipeline</th>
-              <th class="col-time">Started</th>
-              <th class="col-duration">Duration</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for run in runs %}
-            <tr class="{% if run.is_failed %}row--failed{% elsif run.in_progress %}row--running{% endif %}">
-              <td class="col-status">
-                <span class="status-icon {% if run.is_failed %}status-icon--failed{% elsif run.in_progress %}status-icon--running{% endif %}">{{ run.status_icon }}</span>
-              </td>
-              <td class="col-run">
-                <span class="run-name" data-clamp="1">{{ run.name }}</span>
-              </td>
-              <td class="col-pipeline">
-                <span class="pipeline-name" data-clamp="1">{{ run.pipeline }}</span>
-              </td>
-              <td class="col-time">{{ run.started }}</td>
-              <td class="col-duration">{{ run.duration }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+<div class="view">
+  <div class="layout layout--col">
+    <!-- Stats Header -->
+    <div class="flex flex--row flex--center-y gap--medium py--8 border--h-1 mb--8">
+      <div class="flex flex--row flex--center-y gap--xsmall">
+        <span class="value value--large">{{ running_count }}</span>
+        <span class="label label--small">► RUNNING</span>
       </div>
+      <span class="divider--v"></span>
+      <div class="flex flex--row flex--center-y gap--xsmall">
+        <span class="value value--large">{{ completed_count }}</span>
+        <span class="label label--small">✓ OK</span>
+      </div>
+      <span class="divider--v"></span>
+      <div class="flex flex--row flex--center-y gap--xsmall">
+        <span class="label label--inverted px--4 py--2">{{ failed_count }}</span>
+        <span class="label label--small">✗ FAILED</span>
+      </div>
+      <span class="label label--small text--gray-50 grow text--right">{{ stats_period }}</span>
     </div>
+
+    <!-- Pipeline Runs Table -->
+    <table class="table table--small" data-table-limit="true">
+      <thead>
+        <tr>
+          <th></th>
+          <th><span class="title title--small">Run</span></th>
+          <th><span class="title title--small">Pipeline</span></th>
+          <th><span class="title title--small">Started</span></th>
+          <th><span class="title title--small text--right">Duration</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for run in runs %}
+        <tr class="{% if run.is_failed %}bg--gray-20{% elsif run.in_progress %}bg--gray-10{% endif %}">
+          <td>
+            {% if run.is_failed %}<span class="label label--inverted">{{ run.status_icon }}</span>{% else %}<span class="label">{{ run.status_icon }}</span>{% endif %}
+          </td>
+          <td><span class="label label--small" data-clamp="1">{{ run.name }}</span></td>
+          <td><span class="label label--small text--gray-40" data-clamp="1">{{ run.pipeline }}</span></td>
+          <td><span class="label label--small">{{ run.started }}</span></td>
+          <td><span class="label label--small text--right">{{ run.duration }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 
   <div class="title_bar">
@@ -174,144 +166,29 @@ Copy these templates into your TRMNL Private Plugin's markup editor.
     <span class="instance">{{ updated_at }}</span>
   </div>
 </div>
-
-<style>
-  /* Stats Header Bar - Newspaper-style metrics */
-  .stats-bar {
-    display: flex;
-    align-items: center;
-    padding: 8px 0;
-    margin-bottom: 8px;
-    border-top: 2px solid #000;
-    border-bottom: 1px solid #000;
-  }
-  .stats-item {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-    padding: 0 12px;
-  }
-  .stats-item:first-child { padding-left: 0; }
-  .stats-value {
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 1;
-  }
-  .stats-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-  .stats-item--alert .stats-value,
-  .stats-item--alert .stats-label {
-    background: #000;
-    color: #fff;
-    padding: 2px 6px;
-  }
-  .stats-divider {
-    width: 1px;
-    height: 24px;
-    background: #000;
-  }
-  .stats-period {
-    margin-left: auto;
-    font-size: 10px;
-    color: #666;
-    font-style: italic;
-  }
-
-  /* Table Styling */
-  .runs-table { width: 100%; }
-  .runs-table th {
-    font-size: 9px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid #000;
-    padding: 4px 8px 4px 0;
-    text-align: left;
-  }
-  .runs-table td {
-    padding: 6px 8px 6px 0;
-    font-size: 12px;
-    border-bottom: 1px solid #ddd;
-    vertical-align: middle;
-  }
-  .col-status { width: 24px; text-align: center; padding-right: 4px !important; }
-  .col-run { width: 35%; }
-  .col-pipeline { width: 25%; }
-  .col-time { width: 15%; }
-  .col-duration { width: 15%; text-align: right; }
-
-  /* Status Icons */
-  .status-icon {
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    line-height: 18px;
-    text-align: center;
-    font-size: 12px;
-  }
-  .status-icon--failed {
-    background: #000;
-    color: #fff;
-    font-weight: 700;
-  }
-  .status-icon--running {
-    border: 2px solid #000;
-    border-radius: 50%;
-    width: 14px;
-    height: 14px;
-    line-height: 12px;
-    font-size: 10px;
-  }
-
-  /* Row States */
-  .row--failed {
-    background: #e8e8e8;
-  }
-  .row--failed td {
-    font-weight: 600;
-  }
-  .row--running {
-    background: #f5f5f5;
-  }
-
-  /* Text Styling */
-  .run-name {
-    font-weight: 500;
-    font-family: monospace;
-    font-size: 11px;
-  }
-  .pipeline-name {
-    color: #444;
-    font-size: 11px;
-  }
-</style>
 ```
 
 ### Pipelines Overview (Half Vertical)
 
 ```html
-<div class="view view--half_vertical">
+<div class="view">
   <div class="layout">
     <div class="columns">
       <div class="column">
-        <span class="title">{{ title }}</span>
+        <span class="title mb--8">{{ title }}</span>
 
         <table class="table table--xsmall" data-table-limit="true">
           <thead>
             <tr>
-              <th><span class="title title--small"></span></th>
+              <th></th>
               <th><span class="title title--small">Pipeline</span></th>
               <th><span class="title title--small">Status</span></th>
             </tr>
           </thead>
           <tbody>
             {% for pipeline in pipelines %}
-            <tr{% if pipeline.is_failed %} class="row--emphasis"{% endif %}>
-              <td><span class="label{% if pipeline.is_failed %} label--bold{% endif %}">{{ pipeline.status_icon }}</span></td>
+            <tr class="{% if pipeline.is_failed %}bg--gray-20{% endif %}">
+              <td>{% if pipeline.is_failed %}<span class="label label--inverted">{{ pipeline.status_icon }}</span>{% else %}<span class="label">{{ pipeline.status_icon }}</span>{% endif %}</td>
               <td><span class="label label--small" data-clamp="1">{{ pipeline.name }}</span></td>
               <td><span class="label label--small">{{ pipeline.latest_status }}</span></td>
             </tr>
@@ -319,7 +196,7 @@ Copy these templates into your TRMNL Private Plugin's markup editor.
           </tbody>
         </table>
 
-        <span class="label label--small mt-2">{{ updated_at }}</span>
+        <span class="label label--small text--gray-50 mt--8">{{ updated_at }}</span>
       </div>
     </div>
   </div>
@@ -328,35 +205,30 @@ Copy these templates into your TRMNL Private Plugin's markup editor.
     <span class="title">ZenML Pipelines</span>
   </div>
 </div>
-
-<style>
-  .row--emphasis { background-color: #e0e0e0; }
-  .label--bold { font-weight: 700; }
-</style>
 ```
 
 ### Running Only (Quadrant)
 
 ```html
-<div class="view view--quadrant">
+<div class="view">
   <div class="layout">
     <div class="columns">
       <div class="column">
-        <div class="flex items-center gap-2 mb-2">
-          <span class="value value--large">{{ running_count }}</span>
+        <div class="flex flex--row flex--center-y gap--small mb--8">
+          <span class="value value--xlarge">{{ running_count }}</span>
           <span class="label">Running</span>
         </div>
 
         {% for run in runs limit:3 %}
-        <div class="flex items-center gap-1 mb-1">
+        <div class="flex flex--row flex--center-y gap--xsmall mb--4">
           <span class="label label--small">►</span>
           <span class="label label--small" data-clamp="1">{{ run.pipeline }}</span>
-          <span class="label label--small">{{ run.duration }}</span>
+          <span class="label label--small text--gray-50">{{ run.duration }}</span>
         </div>
         {% endfor %}
 
         {% if running_count == 0 %}
-        <span class="label label--small">No pipelines running</span>
+        <span class="label label--small text--gray-50">No pipelines running</span>
         {% endif %}
       </div>
     </div>
@@ -367,6 +239,15 @@ Copy these templates into your TRMNL Private Plugin's markup editor.
   </div>
 </div>
 ```
+
+## Publishing Your Plugin
+
+When publishing to the TRMNL Recipe Store, you'll need:
+
+1. **Author Bio** (`author_bio` field) - Required for end-user support. Add this in your plugin's custom fields.
+2. **Icon** - Upload a plugin icon in the Settings view.
+
+See [Custom Plugin Form Builder](https://help.usetrmnl.com/en/articles/10513740-custom-plugin-form-builder) for details.
 
 ## Status Icons
 
